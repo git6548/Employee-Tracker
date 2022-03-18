@@ -1,7 +1,5 @@
 const inquirer = require('inquirer');
-const {db} = require('./config/connection');
-
-
+const db = require('./config/connection');
 
 const promptUser = () => {
   return inquirer.prompt([
@@ -14,22 +12,17 @@ const promptUser = () => {
   ])
     .then(actionChoice => {
       if (actionChoice.action === 'View all departments') {
-        const sql = `SELECT * FROM departments`;
-        db.query(sql, (err, result) => {
-          if (err) {
-            console.log(err);
-          }
-          console.log(result);
-        });
+viewDepartments();
       }
       else if (actionChoice.action === 'View all roles') {
         //call the function that shows all roles from functions      
       }
       else if (actionChoice.action === 'View all employees') {
         //call the function that shows all employees from functions     
+     viewEmployees();
       }
       else if (actionChoice.action === 'Add a department') {
-        addDeptQuestions();
+         addDeptQuestions();
         //then I need to put this into a query
       }
       else if (actionChoice.action === 'Add a role') {
@@ -43,7 +36,28 @@ const promptUser = () => {
       }
     });;
 };
+// here are all of the sql query functions
+const viewDepartments = () => {
+  const sql = `SELECT * FROM departments`;
+  db.query(sql, (err, result) => {
+    if (err) {
+      console.log(err);
+    }
+    console.table(result);
+  });
+};
 
+const viewEmployees = () => {
+  const sql = `SELECT * FROM employees`;
+  db.query(sql, (err, result) => {
+    if (err) {
+      console.log(err);
+    }
+    console.table(result);
+  });
+}
+
+//here are the additional prompt functions
 const addDeptQuestions = () => {
   return inquirer.prompt([
     {
@@ -52,10 +66,19 @@ const addDeptQuestions = () => {
       message: 'What is the department name?'
     }
   ])
-  .then((deptData) => {
-    const dept = new Dept(deptData.dept_name)
-    deptData.push(dept);
-  })
+    .then((deptData) => {
+      const sql = `INSERT INTO departments
+  (name)
+  VALUES
+  ("${deptData.dept_name}")`;
+      db.query(sql, (err, result) => {
+        if (err) {
+          console.log(err);
+        }
+        viewDepartments()
+        console.log("Department has been added");
+      });
+    })
 };
 
 const addRoleQuestions = () => {
@@ -78,7 +101,7 @@ const addRoleQuestions = () => {
   ])
 };
 
-const addEmployeeQuestions = () => {
+ const addEmployeeQuestions =  () => {
   return inquirer.prompt([
     {
       type: 'input',
@@ -103,24 +126,30 @@ const addEmployeeQuestions = () => {
   ])
 };
 
-const UpdateEmployeeQuestions = () => {
-  return inquirer.prompt([
-    {
-      type: 'input',
-      name: 'employee_first_name',
-      message: 'What is the employees first name?'
-    },
-    {
-      type: 'input',
-      name: 'employee_last_name',
-      message: 'What is the employees last name?'
-    },
-    {
-      type: 'input',
-      name: 'employee_role_id',
-      message: 'What is the employees new role ID?'
+const UpdateEmployeeQuestions = async () => {
+  const sql = `SELECT * FROM employees`;
+  db.query(sql, (err, result) => {
+    if (err) {
+      console.log(err);
     }
-  ])
+  let empFirstName = result.map(name =>  name.id + ". " + name.first_name + " " + name.last_name)
+
+  inquirer.prompt([
+      {
+        type: 'list',
+        name: 'employee_first_name',
+        message: 'What is the employees first name?',
+        choices: empFirstName
+      },
+      {
+        type: 'input',
+        name: 'employee_role_id',
+        message: 'What is the employees new role ID?'
+      }
+    ])
+  });
+
+ 
 };
 
 promptUser();

@@ -3,5 +3,24 @@
     "dotenv": "^16.0.0",
     "inquirer": "^8.2.1",
     "mysql2": "^2.3.3"
-  }
+  },
+  "scripts": {
+    "start": "node server.js"
+  },
+  "name": "employee-tracker",
+  "version": "1.0.0",
+  "main": "function.js",
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/git6548/Employee-Tracker.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/git6548/Employee-Tracker/issues"
+  },
+  "homepage": "https://github.com/git6548/Employee-Tracker#readme",
+  "description": ""
 }

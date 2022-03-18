@@ -1,13 +1,14 @@
-// //const connection = require('./config/connection');
-// //view all departments
+//const connection = require('./config/connection');
+//view all departments
 
-// const sql = `SELECT * FROM departments`;
-// db.query(sql, (err, result) => {
-//   if (err) {
-//     console.log(err);
-//   }
-//   console.log(result);
-// });
+allDepts =>{
+const sql = `SELECT * FROM departments`;
+db.query(sql, (err, result) => {
+  if (err) {
+    console.log(err);
+  }
+  console.log(result);
+})};
 
 
 //   // view all departments
@@ -40,3 +41,4 @@
 
 
 // // };
+
