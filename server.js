@@ -12,18 +12,17 @@ const promptUser = () => {
   ])
     .then(actionChoice => {
       if (actionChoice.action === 'View all departments') {
-viewDepartments();
+        viewDepartments();
       }
       else if (actionChoice.action === 'View all roles') {
-        //call the function that shows all roles from functions      
+        viewRoles();    
       }
       else if (actionChoice.action === 'View all employees') {
         //call the function that shows all employees from functions     
-     viewEmployees();
+        viewEmployees();
       }
       else if (actionChoice.action === 'Add a department') {
-         addDeptQuestions();
-        //then I need to put this into a query
+        addDeptQuestions();
       }
       else if (actionChoice.action === 'Add a role') {
         addRoleQuestions();
@@ -47,6 +46,16 @@ const viewDepartments = () => {
   });
 };
 
+const viewRoles = () => {
+  const sql = `SELECT * FROM roles`;
+  db.query(sql, (err, result) => {
+    if (err) {
+      console.log(err);
+    }
+    console.table(result);
+  });
+};
+
 const viewEmployees = () => {
   const sql = `SELECT * FROM employees`;
   db.query(sql, (err, result) => {
@@ -55,7 +64,8 @@ const viewEmployees = () => {
     }
     console.table(result);
   });
-}
+};
+
 
 //here are the additional prompt functions
 const addDeptQuestions = () => {
@@ -99,9 +109,22 @@ const addRoleQuestions = () => {
       message: 'What is the department ID for this role?'
     }
   ])
+  .then((roleData) => {
+    const sql = `INSERT INTO roles
+(title, salary, department_id)
+VALUES
+("${roleData.role_title}",${roleData.role_salary}, ${roleData.role_dept_id})`;
+    db.query(sql, (err, result) => {
+      if (err) {
+        console.log(err);
+      }
+      viewRoles()
+      console.log("Role has been added");
+    });
+  })
 };
 
- const addEmployeeQuestions =  () => {
+const addEmployeeQuestions = () => {
   return inquirer.prompt([
     {
       type: 'input',
@@ -124,6 +147,19 @@ const addRoleQuestions = () => {
       message: 'What is the employees managers ID?'
     }
   ])
+  .then((employeeData) => {
+    const sql = `INSERT INTO employees
+(first_name, last_name, role_id, manager_id)
+VALUES
+("${employeeData.employee_first_name}","${employeeData.employee_last_name}", ${employeeData.employee_role_id}, ${employeeData.employee_manager_id})`;
+    db.query(sql, (err, result) => {
+      if (err) {
+        console.log(err);
+      }
+      viewEmployees()
+      console.log("Employee has been added");
+    });
+  })
 };
 
 const UpdateEmployeeQuestions = async () => {
@@ -132,9 +168,9 @@ const UpdateEmployeeQuestions = async () => {
     if (err) {
       console.log(err);
     }
-  let empFirstName = result.map(name =>  name.id + ". " + name.first_name + " " + name.last_name)
+    let empFirstName = result.map(name => name.id + ". " + name.first_name + " " + name.last_name)
 
-  inquirer.prompt([
+    inquirer.prompt([
       {
         type: 'list',
         name: 'employee_first_name',
@@ -147,9 +183,23 @@ const UpdateEmployeeQuestions = async () => {
         message: 'What is the employees new role ID?'
       }
     ])
-  });
+  }) 
+//    .then((employeeUpdatedData) => {
+//     const sql = `UPDATE employees
+//     SET role_id= ${employeeUpdatedData.employee_role_id}
+//     WHERE 
+//     first_name = ${name.first_name} & last_name = ${name.last_name}
+// `;
+//     db.query(sql, (err, result) => {
+//       if (err) {
+//         console.log(err);
+//       }
+//       viewEmployees()
+//       console.log("Employee has been updated");
+//     });
+// })
 
- 
+
 };
 
 promptUser();
