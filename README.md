@@ -2,6 +2,8 @@
 ## By Stephanie Anderson
 [Link to Walkthrough](https://drive.google.com/file/d/10U_HWpc9r4tpUvJGRAaI6hBs2oYT6TlF/view)
 
+[Link to Github](https://github.com/git6548/Employee-Tracker)
+
 ![screenshot](./Screenshot%202022-03-19%20121609.jpg "Screenshot")
 # User Story
 AS A business owner
